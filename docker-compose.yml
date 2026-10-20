@@ -1,0 +1,37 @@
+services:
+  jupyter-pipeline:
+    image: xilinx/smartcam:2022.1
+    container_name: jupyter-pipeline
+    hostname: xlnx-docker
+    network_mode: host
+    privileged: true
+
+    environment:
+      - DISPLAY
+      - XDG_SESSION_TYPE
+
+    volumes:
+      - /home/ubuntu/.Xauthority:/root/.Xauthority:rw
+      - /tmp:/tmp
+      - /dev:/dev
+      - /sys:/sys
+      - /etc/vart.conf:/etc/vart.conf
+      - /lib/firmware/xilinx:/lib/firmware/xilinx
+      - /run:/run
+      - /home/ubuntu/notebooks:/root/notebooks
+
+    working_dir: /root/notebooks
+
+    # Start JupyterLab with real-time collaboration turned on
+    command: >
+      jupyter lab
+      --collaborative
+      --ip=192.168.69.249
+      --port=8888
+      --no-browser
+      --allow-root
+      --notebook-dir=/root/notebooks
+
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
