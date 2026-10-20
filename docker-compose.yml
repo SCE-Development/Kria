@@ -18,11 +18,11 @@ services:
       - /etc/vart.conf:/etc/vart.conf
       - /lib/firmware/xilinx:/lib/firmware/xilinx
       - /run:/run
-      - /home/ubuntu/notebooks:/root/notebooks
+      - /home/ubuntu/notebooks:/root/notebooks # we added this from the docker run command so if container goes down we still have the notebook. 
 
     working_dir: /root/notebooks
 
-    # Start JupyterLab with real-time collaboration turned on
+    # Start JupyterLab with real-time collaboration since mutliple people
     command: >
       jupyter lab
       --collaborative
@@ -31,7 +31,7 @@ services:
       --no-browser
       --allow-root
       --notebook-dir=/root/notebooks
-
+  
     stdin_open: true
     tty: true
     restart: unless-stopped
