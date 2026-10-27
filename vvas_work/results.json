@@ -1,0 +1,12 @@
+{
+  "vvas-library-repo": "/root/notebooks/vvas_work/",
+  "element-mode": "passthrough",
+  "kernels": [
+    {
+      "library-name": "libvvas_results.so",
+      "config": {
+        "output-file": "/tmp/vvas_results.jsonl"
+      }
+    }
+  ]
+}
