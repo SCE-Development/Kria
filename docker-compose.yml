@@ -18,7 +18,7 @@ services:
       - /etc/vart.conf:/etc/vart.conf
       - /lib/firmware/xilinx:/lib/firmware/xilinx
       - /run:/run
-      - /home/ubuntu/notebooks:/root/notebooks # we added this from the docker run command so if container goes down we still have the notebook. 
+      - /home/ubuntu/notebooks:/root/notebooks # we added this from the docker run command so if container goes down we still have the notebook.
 
     working_dir: /root/notebooks
 
@@ -26,12 +26,42 @@ services:
     command: >
       jupyter lab
       --collaborative
-      --ip=192.168.69.249
+      --ip="${KRIA_IP}"
       --port=8888
       --no-browser
       --allow-root
       --notebook-dir=/root/notebooks
-  
+
     stdin_open: true
     tty: true
     restart: unless-stopped
+
+  node_exporter:
+    image: prom/node-exporter:latest
+    container_name: node-exporter
+    restart: unless-stopped
+    network_mode: host
+    pid: host
+    volumes:
+      - /:/host:ro
+    command:
+      - --path.rootfs=/host
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:latest
+    container_name: cadvisor
+    restart: unless-stopped
+    ports:
+      - "${KRIA_IP}:8080:8080"
+    privileged: true
+    devices:
+      - /dev/kmsg
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    command:
+      - --housekeeping_interval=15s
+      - --docker_only=true
+      - --enable_metrics=disk,network,tcp,udp,percpu,sched,process
